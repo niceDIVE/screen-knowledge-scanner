@@ -1,0 +1,5 @@
+var engine = new UmiOcr(options, clients);
+if (options.OcrEngine == "umi") Use(engine);
+SELECT bm25(search) FROM search WHERE search MATCH ?
+throw new InvalidOperationException("识别失败");
+curl -X POST http://127.0.0.1:1225/api/ocr -d @body.json

@@ -30,14 +30,19 @@ param(
     # 结果标签，写进 CSV 与 Markdown，用于区分引擎/配置
     [string]$Tag = '',
     # 覆盖 Scanner:UmiUrl（多实例对比时用，例如 Rapid 版跑在 1225）
-    [string]$UmiUrl
+    [string]$UmiUrl,
+    # 覆盖 Scanner:UmiParser（single_para 逐行 / multi_para 双栏）
+    [string]$UmiParser,
+    # 覆盖要启动的程序集路径（默认 bin\Debug，可用 artifacts 下的独立构建）
+    [string]$Dll
 )
 
 $ErrorActionPreference = 'Stop'
 $benchRoot = $PSScriptRoot
 $repoRoot = Split-Path -Parent (Split-Path -Parent $benchRoot)
 $imgDir = if ($ImgDir) { if ([IO.Path]::IsPathRooted($ImgDir)) { $ImgDir } else { Join-Path $benchRoot $ImgDir } } else { Join-Path $benchRoot 'output' }
-$dll = Join-Path $repoRoot 'screen-v2\src\Screen.App\bin\Debug\net10.0-windows10.0.19041.0\Screen.App.dll'
+if (-not $Dll) { $Dll = Join-Path $repoRoot 'screen-v2\src\Screen.App\bin\Debug\net10.0-windows10.0.19041.0\Screen.App.dll' }
+$dll = $Dll
 
 if (-not (Test-Path $dll)) { throw "找不到已构建的 V2 程序集：$dll（先跑 screen-v2\scripts\run-windows.ps1 或 dotnet build）" }
 if (-not (Test-Path $imgDir)) { throw "找不到测试图目录：$imgDir（先跑 make-bench-images.ps1）" }
@@ -83,7 +88,8 @@ New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
 
 $proc = Start-Process -FilePath 'dotnet' -PassThru -WindowStyle Hidden -ArgumentList $(
     @($dll, '--urls', $base, "--Scanner:DataDirectory=$dataDir", '--Scanner:OpenBrowser=false', "--Scanner:OcrEngine=$Engine") +
-    $(if ($UmiUrl) { @("--Scanner:UmiUrl=$UmiUrl") } else { @() })
+    $(if ($UmiUrl) { @("--Scanner:UmiUrl=$UmiUrl") } else { @() }) +
+    $(if ($UmiParser) { @("--Scanner:UmiParser=$UmiParser") } else { @() })
 )
 Write-Host "隔离实例 PID=$($proc.Id) 数据目录=$dataDir 引擎=$Engine" + $(if ($UmiUrl) { " UmiUrl=$UmiUrl" } else { '' })
 

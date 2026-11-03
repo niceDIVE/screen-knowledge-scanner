@@ -1,0 +1,6 @@
+{
+  "preset_name": "深度润色",
+  "temperature": 0.7,
+  "prompt_order": [100, 191, 192],
+  "enabled": true
+}
