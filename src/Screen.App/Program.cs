@@ -1,5 +1,6 @@
 using System.IO.Compression;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using Screen.App;
@@ -11,6 +12,13 @@ if (options.CaptureFocusDelayMs is < 0 or > 10_000)
     throw new ArgumentException("CaptureFocusDelayMs 必须在 0–10000 之间。");
 if (options.ScrollStabilityWaitMs is < 200 or > 5000)
     throw new ArgumentException("ScrollStabilityWaitMs 必须在 200–5000 之间。");
+// 版本号从构建元数据读取（csproj 的 <Version> + git 提交号），不再硬编码
+var appVersion = typeof(ScannerOptions).Assembly
+    .GetCustomAttribute<System.Reflection.AssemblyInformationalVersionAttribute>()?.InformationalVersion
+    ?? typeof(ScannerOptions).Assembly.GetName().Version?.ToString()
+    ?? "0.0.0";
+var buildMetadataIndex = appVersion.IndexOf('+');
+if (buildMetadataIndex > 0) appVersion = appVersion[..buildMetadataIndex];
 var defaultDataDirectory = "data";
 #if WINDOWS
 var legacyDataDirectory = Path.Combine(builder.Environment.ContentRootPath, "data");
@@ -95,7 +103,7 @@ app.MapGet("/api/status", (ICaptureSource capture, IOcrEngine ocr, ScrollCoordin
     captureFocusDelayMs = options.CaptureFocusDelayMs,
     region = store.GetRegion(),
     scroll = scroll.State,
-    version = "2.0.0"
+    version = appVersion
 });
 app.MapGet("/api/runs", () => store.Runs());
 app.MapPost("/api/runs", (CreateRunRequest request) => Results.Created("/api/runs", store.CreateRun(request.Title)));

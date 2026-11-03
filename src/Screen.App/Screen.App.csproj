@@ -4,6 +4,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- 版本号唯一来源：/api/status 从这里读 InformationalVersion（含 +提交号，展示时截断） -->
+    <Version>2.2.0</Version>
+    <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(WindowsDesktop)' == 'true'">
     <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>

@@ -7,6 +7,11 @@ public sealed class ScannerOptions
     public string TesseractExecutable { get; set; } = "tesseract";
     public string TesseractLanguages { get; set; } = "eng";
     public string UmiUrl { get; set; } = "http://127.0.0.1:1224/api/ocr";
+    /// <summary>
+    /// Umi 的排版解析方案（tbpu.parser）。默认 single_para：单栏正文/表格/代码按逐行顺序取文本。
+    /// 双栏正文要改 multi_para，否则会横穿两栏（实测 CER 77.3% → 0.8%）。
+    /// </summary>
+    public string UmiParser { get; set; } = "single_para";
     public bool Hotkeys { get; set; } = true;
     public bool OpenBrowser { get; set; } = true;
     public int CaptureFocusDelayMs { get; set; } = 3000;
