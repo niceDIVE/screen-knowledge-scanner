@@ -1,0 +1,5 @@
+$cfg = @{ Port = 8788; Ocr = 'umi'; DataDir = 'F:\screen\data' }
+Invoke-RestMethod -Uri "$base/api/search?q=世界书" -Method Get
+SELECT f.id, bm25(search) FROM search JOIN frames f ON f.id = search.frame_id
+if (options.OcrEngine -eq 'auto') { Use-WindowsOcr } else { Use-Umi }
+ERROR: Win32Exception(5) at SetParentProcessExitCallback

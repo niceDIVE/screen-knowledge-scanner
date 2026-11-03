@@ -27,3 +27,6 @@ obj/
 *.swp
 Thumbs.db
 desktop.ini
+
+# OCR 基线的派生图（由 make-matrix-images.ps1 + 放大脚本一键重建，不入库）
+tests/ocr-bench/matrix-ct2x/

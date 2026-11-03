@@ -1,0 +1,5 @@
+路径：D:\work\screen-v2\src\Screen.App\bin\Debug\net10.0-windows10.0.19041.0
+接口：POST /api/runs/{id}/frames?source=import&text=世界书
+配置：Scanner:HotkeyKeys:Region = Ctrl+Alt+R（被占用时改键）
+数值：CER 3.6% / 17.5%，耗时 1.2s / 0.4s，内存 320MB / 75MB
+标识符：_backup、snake_case、kebab-case、CamelCase 全都要认对
