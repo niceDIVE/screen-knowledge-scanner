@@ -89,4 +89,32 @@ public class UmiComposeTests
     {
         Assert.Equal("", UmiOcr.Compose(Array.Empty<(string?, string?)>()));
     }
+
+    [Fact]
+    public void 同一行的多个单元格保持在同一行()
+    {
+        var blocks = new UmiBlock[]
+        {
+            new("项目", " ", 25, 14),
+            new("端口", " ", 25, 14),
+            new("状态", "\n", 25, 14),
+        };
+
+        Assert.Equal("项目 端口 状态", UmiOcr.Compose(blocks));
+    }
+
+    [Fact]
+    public void end是空格但纵向换了行时补换行()
+    {
+        // 表格的典型情况：单元格之间 end 只是空格，但下一格在同一列的下一行
+        var blocks = new UmiBlock[]
+        {
+            new("项目", " ", 25, 14),
+            new("端口", " ", 25, 14),
+            new("V1", " ", 59, 14),
+            new("8788", "\n", 59, 14),
+        };
+
+        Assert.Equal("项目 端口\nV1 8788", UmiOcr.Compose(blocks));
+    }
 }

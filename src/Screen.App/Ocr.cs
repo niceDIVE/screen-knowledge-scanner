@@ -120,18 +120,24 @@ public sealed class UmiOcr(ScannerOptions options, IHttpClientFactory clients) :
         {
             var current = list[i];
             builder.Append(current.Text);
-            var end = current.End ?? "";
-            if (end.Contains('\n'))
+            // end 缺失 = 没给结构信息，按换行处理
+            if (current.End is null)
             {
-                builder.Append(end);
+                builder.Append('\n');
                 continue;
             }
+            if (current.End.Contains('\n'))
+            {
+                builder.Append(current.End);
+                continue;
+            }
+            // end 是空串或空格：用几何判断是否真的换行（表格单元格之间就是这种情况）
             var nextIsNewRow = i + 1 < list.Count
                 && rowTolerance > 0
                 && !double.IsNaN(current.CenterY)
                 && !double.IsNaN(list[i + 1].CenterY)
                 && Math.Abs(list[i + 1].CenterY - current.CenterY) > rowTolerance;
-            builder.Append(nextIsNewRow ? "\n" : end);
+            builder.Append(nextIsNewRow ? "\n" : current.End);
         }
         return builder.ToString().TrimEnd();
     }
