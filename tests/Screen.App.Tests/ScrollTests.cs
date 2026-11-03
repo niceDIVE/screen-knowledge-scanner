@@ -39,7 +39,8 @@ public sealed class ScrollTests
             store.SetRegion(region);
             var source = new FakeCapture { ChangeTargetDuringCapture = true };
             var coordinator = new ScrollCoordinator(source, store, new Lifetime(), NullLogger<ScrollCoordinator>.Instance, new());
-            Assert.Throws<InvalidOperationException>(() => coordinator.Single(run.Id, null));
+            // 目标失活按新语义抛 TargetInactiveException（不再与执行异常混用 InvalidOperationException）
+            Assert.Throws<TargetInactiveException>(() => coordinator.Single(run.Id, null));
             Assert.Equal(region, source.SessionRegion);
             Assert.Empty(store.Frames(run.Id));
             Assert.Empty(Directory.GetFiles(Path.Combine(path, "images")));

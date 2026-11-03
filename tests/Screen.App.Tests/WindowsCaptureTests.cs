@@ -24,8 +24,9 @@ public sealed class WindowsCaptureTests
         Assert.Equal(320, gray.Width);
         Assert.Equal(200, gray.Height);
         Assert.Equal(gray.Width * gray.Height, gray.Pixels.Length);
+        // 320×200 源图缩略图保持 1:1：左半黑（0..159 列）、右半白（160..319 列）
         Assert.Equal(0, gray.Pixels[50 * gray.Width + 40]);
-        Assert.Equal(255, gray.Pixels[50 * gray.Width + 120]);
+        Assert.Equal(255, gray.Pixels[50 * gray.Width + 240]);
     }
 
     [Fact]
