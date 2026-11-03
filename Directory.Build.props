@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <BaseIntermediateOutputPath Condition="'$(WindowsDesktop)' == 'true'">obj/windows/</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(WindowsDesktop)' != 'true'">obj/portable/</BaseIntermediateOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/obj/**;**/bin/**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>

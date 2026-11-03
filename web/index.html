@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>屏幕扫描机器人</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>屏幕扫描机器人</h1>
+    <span id="daemon-dot" class="dot off"></span>
+    <span id="daemon-text">守护进程：未运行</span>
+    <span id="scroll-state" class="pill hidden">滚动扫描中…</span>
+    <span id="region-pill" class="pill2">区域：全屏</span>
+    <span id="rhythm-text" class="dimtext"></span>
+  </div>
+  <div class="btns">
+    <button id="btn-daemon">启动守护进程</button>
+    <button id="btn-region">框选区域</button>
+    <button id="btn-region-clear">清除选区</button>
+    <button id="btn-capture" class="primary">📸 扫描屏幕</button>
+    <button id="btn-scroll">滚动扫描</button>
+    <button id="btn-process">处理 inbox</button>
+  </div>
+</header>
+
+<section class="searchbar">
+  <input id="q" placeholder="搜索知识库，如：世界书 / 预设 / 写卡">
+  <button id="btn-search">搜索</button>
+  <input id="aq" placeholder="问一问，如：写卡时怎么控制节奏">
+  <button id="btn-ask">问一问</button>
+</section>
+
+<main>
+  <nav>
+    <div class="tabs">
+      <button data-tab="vault" class="on">知识库</button>
+      <button data-tab="inbox">收集箱</button>
+      <button data-tab="checklist">复制清单</button>
+      <button data-tab="log">日志</button>
+    </div>
+    <ul id="filelist"></ul>
+  </nav>
+  <article id="viewer">
+    <p class="hint">← 从左侧选择内容；先用「扫描屏幕」采集，再「处理 inbox」入库。</p>
+  </article>
+</main>
+
+<div id="toast" class="hidden"></div>
+<script src="/app.js"></script>
+</body>
+</html>

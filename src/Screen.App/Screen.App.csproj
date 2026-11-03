@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(WindowsDesktop)' == 'true'">
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <NuGetLockFilePath>packages.windows.lock.json</NuGetLockFilePath>
+    <NuGetLockFilePath Condition="'$(PublishSingleFile)' != 'true'">packages.windows.build.lock.json</NuGetLockFilePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.14" />
+    <Content Update="wwwroot/**/*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(WindowsDesktop)' != 'true'">
+    <Compile Remove="Windows/**/*.cs" />
+  </ItemGroup>
+</Project>
