@@ -57,9 +57,9 @@ public sealed class ScrollCoordinator(ICaptureSource capture, KnowledgeStore sto
     private CaptureResult CaptureTarget(Region? region)
     {
         const string changed = "阅读窗口或鼠标位置发生变化，已停止采集。";
-        if (!capture.IsTargetActive()) throw new InvalidOperationException(changed);
+        if (!capture.IsTargetActive()) throw new TargetInactiveException(changed);
         var shot = capture.Capture(region);
-        if (!capture.IsTargetActive()) throw new InvalidOperationException(changed);
+        if (!capture.IsTargetActive()) throw new TargetInactiveException(changed);
         return shot;
     }
     private async Task<CaptureResult> Stable(Region? region, CancellationToken token)
@@ -90,11 +90,11 @@ public sealed class ScrollCoordinator(ICaptureSource capture, KnowledgeStore sto
             var first = await Stable(region, token);
             store.AddFrame(request.RunId, first.Bytes, "scroll", first.Region);
             Update("running", "首帧已保存", 1);
-            var previous = capture.Gray(first.Bytes); var noMovement = 0;
+            var previous = capture.Gray(first.Bytes); var previousBytes = first.Bytes; var noMovement = 0;
             for (var step = 0; step < request.Steps; step++)
             {
                 await Task.Delay(request.DelayMs, token);
-                if (!capture.IsTargetActive()) throw new InvalidOperationException("阅读窗口或鼠标位置发生变化，已停止采集。");
+                if (!capture.IsTargetActive()) throw new TargetInactiveException("阅读窗口或鼠标位置发生变化，已停止采集。");
                 capture.Scroll(request.WheelNotches);
                 var shot = await Stable(region, token);
                 store.AddFrame(request.RunId, shot.Bytes, "scroll", shot.Region);
@@ -107,11 +107,28 @@ public sealed class ScrollCoordinator(ICaptureSource capture, KnowledgeStore sto
                 }
                 var physicalOffset = (int)Math.Round(motion.OffsetPixels * shot.Region.Height / (double)gray.Height);
                 Update("running", $"已保存第 {step + 2} 帧 · 位移约 {physicalOffset}px · 重叠 {motion.Overlap:P0}");
-                noMovement = motion.OffsetPixels == 0 ? noMovement + 1 : 0;
+                if (motion.OffsetPixels == 0)
+                {
+                    // 缩略图判"未移动"时必须用原分辨率复核：周期性排版在低分辨率采样下会与静止不可区分
+                    var fullMove = MotionEstimator.Difference(capture.GrayFull(previousBytes), capture.GrayFull(shot.Bytes));
+                    if (fullMove >= 0.002)
+                    {
+                        var note = $"第 {step + 2} 帧缩略图未见位移但原图有变化（周期内容或动态区域），已保留原图并停止自动滚动，请核对后继续。";
+                        store.AddNote(request.RunId, note); Update("needs-review", note); return;
+                    }
+                    noMovement++;
+                }
+                else noMovement = 0;
                 if (noMovement >= 2) { Update("completed", "连续两步画面未移动，本段采集结束。"); return; }
-                previous = gray;
+                previous = gray; previousBytes = shot.Bytes;
             }
             Update("completed", "已达到本段步数，原图已保存，OCR 在后台继续。");
+        }
+        catch (TargetInactiveException ex)
+        {
+            // 目标失活（鼠标移出/前台窗口切换）是可恢复的中止，不是执行故障
+            log.LogInformation("Scroll capture aborted: {Message}", ex.Message);
+            store.AddNote(request.RunId, ex.Message); Update("aborted", ex.Message);
         }
         catch (OperationCanceledException) { Update("stopped", "采集已停止，原图与识别任务已保留。"); }
         catch (Exception ex)

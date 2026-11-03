@@ -30,9 +30,20 @@ public sealed class WindowsCapture : ICaptureSource
     }
     public GrayFrame Gray(byte[] image)
     {
+        // 320 宽缩略图：160 宽在 900px 窗口下每行仅约 3.5px，密集小字/周期性内容的位移估计区分度不足
         using var stream=new MemoryStream(image); using var source=new Bitmap(stream);
-        var scale=Math.Min(160.0/source.Width,320.0/source.Height);
-        var w=Math.Clamp((int)(source.Width*scale),12,160); var h=Math.Clamp((int)(source.Height*scale),12,320);
+        var scale=Math.Min(320.0/source.Width,640.0/source.Height);
+        var w=Math.Clamp((int)(source.Width*scale),12,320); var h=Math.Clamp((int)(source.Height*scale),12,640);
+        return Downscale(source,w,h);
+    }
+    /// <summary>原分辨率灰度（逐 2 像素抽样，控制开销）：仅在缩略图判定零位移时用于二次确认。</summary>
+    public GrayFrame GrayFull(byte[] image)
+    {
+        using var stream=new MemoryStream(image); using var source=new Bitmap(stream);
+        return Downscale(source,source.Width,source.Height);
+    }
+    private static GrayFrame Downscale(Bitmap source,int w,int h)
+    {
         using var small=new Bitmap(w,h,PixelFormat.Format24bppRgb);
         using(var graphics=Graphics.FromImage(small)) graphics.DrawImage(source,0,0,w,h);
         var data=small.LockBits(new(0,0,w,h),ImageLockMode.ReadOnly,PixelFormat.Format24bppRgb);
@@ -51,9 +62,9 @@ public sealed class WindowsCapture : ICaptureSource
     public void BeginSession(Region? region)
     {
         target=Native.GetForegroundWindow();
-        if(target==0||!Native.GetWindowRect(target,out targetBounds)) throw new InvalidOperationException("未找到当前阅读窗口。");
+        if(target==0||!Native.GetWindowRect(target,out targetBounds)) throw new TargetInactiveException("未找到当前阅读窗口。");
         sessionRegion=CaptureBounds(region);
-        if(!IsTargetActive()) throw new InvalidOperationException("请将鼠标放在前台阅读窗口和采集区域内，再开始采集。");
+        if(!IsTargetActive()) throw new TargetInactiveException("请将鼠标放在前台阅读窗口和采集区域内，再开始采集。");
     }
     public bool IsTargetActive()
     {
@@ -63,7 +74,7 @@ public sealed class WindowsCapture : ICaptureSource
     }
     public void Scroll(int notches)
     {
-        if(!IsTargetActive()) throw new InvalidOperationException("阅读窗口或鼠标位置已变化。");
+        if(!IsTargetActive()) throw new TargetInactiveException("阅读窗口或鼠标位置已变化，已停止采集。");
         Native.mouse_event(0x0800,0,0,-120*notches,0);
     }
     private static class Native

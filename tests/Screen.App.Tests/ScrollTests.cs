@@ -82,6 +82,12 @@ public sealed class ScrollTests
             var start = (image[^1] + image[^2]) * 80;
             return new(80, 100, world[start..(start + 80 * 100)]);
         }
+        public GrayFrame GrayFull(byte[] image)
+        {
+            // 替身里原分辨率与缩略图等价：零位移复核路径可被覆盖，但不引入不同数据
+            var start = (image[^1] + image[^2]) * 80;
+            return new(80, 100, world[start..(start + 80 * 100)]);
+        }
         public bool IsTargetActive() => active;
         public void BeginSession(Region? region) { SessionRegion = region; active = true; }
         public void Scroll(int notches) => position += 10;

@@ -2,6 +2,18 @@ namespace Screen.App;
 
 public static class MotionEstimator
 {
+    /// <summary>归一化平均绝对差（0..1）。任意分辨率可用，供"零位移"的原分辨率二次确认。</summary>
+    public static double Difference(GrayFrame a, GrayFrame b)
+    {
+        if (a.Width != b.Width || a.Height != b.Height) return 1;
+        long error = 0; var count = 0;
+        for (var i = 0; i < a.Pixels.Length; i += 2)
+        {
+            error += Math.Abs(a.Pixels[i] - b.Pixels[i]); count++;
+        }
+        return count == 0 ? 1 : error / (255.0 * count);
+    }
+
     public static MotionEstimate Estimate(GrayFrame previous, GrayFrame next)
     {
         if (previous.Width != next.Width || previous.Height != next.Height) return new(false, 0, 0, 0, 1);

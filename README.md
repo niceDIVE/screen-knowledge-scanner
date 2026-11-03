@@ -51,6 +51,8 @@ powershell -ExecutionPolicy Bypass -File scripts\run-windows.ps1
 | 开始滚动采集 | Ctrl+Alt+W |
 | 停止滚动采集 | Ctrl+Alt+Q |
 
+热键可在 `appsettings.json` 的 `Scanner:HotkeyKeys` 改键（四组，格式如 `Ctrl+Alt+S`，支持 Ctrl/Alt/Shift/Win + A-Z/0-9/F1-F24）。注册失败时日志会指明具体按键、受影响动作与改键路径；框选也可从页面「框选区域」按钮触发。
+
 页面截图按钮默认倒计时 3 秒，滚动按钮等待 4 秒。请在倒计时结束前切换到阅读窗口，并把鼠标放进前台阅读窗口和采集区域。单帧截图以倒计时结束时的前台窗口为目标，截图前后校验窗口和鼠标位置。滚动前先保存首帧；画面重叠不确定、窗口改变或鼠标离开区域时停止并保留已保存的证据。默认最多 12 步或 3 分钟。
 
 生成无需另装 .NET 的 Windows x64 发布包：
