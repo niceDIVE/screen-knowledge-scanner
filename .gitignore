@@ -1,0 +1,29 @@
+# 运行时产物与个人数据（绝不入库）
+logs/
+inbox/
+vault/
+tests/output*/
+*.pid
+*.state
+*.report.txt
+region.json
+web.url
+
+# V2 工作台（独立仓库分支的克隆副本，另立仓库管理）
+screen-v2/
+
+# 本地备份（时间戳目录，不入库）
+_backup/
+
+# .NET 构建产物
+bin/Debug/
+bin/Release/
+obj/
+*.user
+
+# 编辑器 / 系统
+.vs/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
