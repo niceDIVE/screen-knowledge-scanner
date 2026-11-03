@@ -1,0 +1,5 @@
+﻿"标签","用例","状态","参考字数","识别字数","编辑距离","CER%","耗时s"
+"final-single_para","code","succeeded","179","179","3","1.7","0.87"
+"final-single_para","json","succeeded","58","58","0","0","0.83"
+"final-single_para","table","succeeded","67","67","0","0","0.42"
+"final-single_para","two-column","succeeded","132","132","102","77.3","0.83"
