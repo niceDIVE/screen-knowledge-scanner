@@ -2,7 +2,7 @@
 ' Pure ASCII on purpose: WScript reads .vbs as ANSI.
 ' Resolves the project root from this file's own location, then starts
 ' screen-v2\scripts\run-windows.ps1 in a hidden console; that script builds
-' and runs the app, which opens the browser at http://127.0.0.1:8788 itself.
+' and runs the app, which opens the browser at http://127.0.0.1:8800 itself.
 Set sh = CreateObject("WScript.Shell")
 Set fso = CreateObject("Scripting.FileSystemObject")
 projRoot = fso.GetParentFolderName(fso.GetParentFolderName(WScript.ScriptFullName))
