@@ -24,7 +24,7 @@ dotnet restore Screen.sln --locked-mode
 bash scripts/run.sh
 ```
 
-启动脚本将数据保存在仓库根目录 `data/`。服务启动后，在本机浏览器打开 `http://127.0.0.1:8788`。通用构建支持图片导入、OCR、校对、检索与导出。Linux/macOS 默认使用 Tesseract，需预先安装；中文识别还需要简体中文模型。例如：
+启动脚本将数据保存在仓库根目录 `data/`。服务启动后，在本机浏览器打开 `http://127.0.0.1:8800`。通用构建支持图片导入、OCR、校对、检索与导出。Linux/macOS 默认使用 Tesseract，需预先安装；中文识别还需要简体中文模型。例如：
 
 ```bash
 # Debian / Ubuntu

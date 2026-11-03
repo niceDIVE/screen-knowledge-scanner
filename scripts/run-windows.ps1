@@ -1,5 +1,5 @@
-[CmdletBinding()]
-param([int]$Port = 8788, [switch]$NoBrowser)
+﻿[CmdletBinding()]
+param([int]$Port = 8800, [switch]$NoBrowser)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 Push-Location $root

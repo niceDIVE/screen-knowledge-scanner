@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param([ValidateSet('win-x64','win-arm64')][string]$Runtime='win-x64')
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
