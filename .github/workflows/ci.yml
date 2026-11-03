@@ -1,0 +1,35 @@
+name: Build and test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore Screen.sln --locked-mode
+      - run: dotnet test Screen.sln --no-restore --configuration Release
+      - run: node --check src/Screen.App/wwwroot/app.js
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test desktop target
+        env:
+          Scanner__Hotkeys: 'false'
+          Scanner__OpenBrowser: 'false'
+        run: |
+          dotnet restore Screen.sln -p:WindowsDesktop=true --locked-mode
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          dotnet test Screen.sln -p:WindowsDesktop=true --no-restore --configuration Release
+      - name: Publish desktop package
+        shell: pwsh
+        run: ./scripts/publish-windows.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screen-win-x64
+          path: artifacts/screen-win-x64.zip
